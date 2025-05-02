@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Invoice {{ invoice.invoice_number }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Invoice {{ invoice.invoice_number }}</h1>
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h2 class="text-lg font-semibold">Customer</h2>
+                <p>{{ invoice.customer.name }}</p>
+                <p>{{ invoice.customer.email }}</p>
+                <p>{{ invoice.customer.phone }}</p>
+                <p>{{ invoice.customer.address }}</p>
+            </div>
+            <div>
+                <h2 class="text-lg font-semibold">Invoice Info</h2>
+                <p><strong>Date:</strong> {{ invoice.created_date }}</p>
+                <p><strong>Due Date:</strong> {{ invoice.due_date }}</p>
+                <p><strong>Status:</strong> {{ invoice.status|capfirst }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <h2 class="text-lg font-semibold mb-4">Items</h2>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in invoice.items.all %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ item.description }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ item.quantity }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${{ item.unit_price }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-6 mb-6 max-w-md ml-auto">
+        <div class="grid grid-cols-2 gap-4">
+            <div class="font-semibold">Subtotal:</div>
+            <div>${{ invoice.subtotal }}</div>
+            <div class="font-semibold">Tax:</div>
+            <div>${{ invoice.tax }}</div>
+            <div class="font-semibold">Discount:</div>
+            <div>${{ invoice.discount }}</div>
+            <div class="font-semibold">Total:</div>
+            <div>${{ invoice.total }}</div>
+        </div>
+    </div>
+
+    <div class="flex space-x-4">
+        <a href="{% url 'invoices:export_invoice_pdf' invoice.pk %}" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Export PDF</a>
+        <a href="{% url 'invoices:export_invoice_excel' invoice.pk %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Export Excel</a>
+        <a href="{% url 'invoices:invoice_list' %}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Back to List</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Organization Profile{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Organization Profile</h1>
+    <form method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <div class="mb-4">
+                <label for="{{ form.organization_name.id_for_label }}" class="block text-sm font-medium text-gray-700">Organization Name</label>
+                {{ form.organization_name }}
+                {% if form.organization_name.errors %}
+                    <p class="text-red-600 text-sm">{{ form.organization_name.errors }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <label for="{{ form.logo.id_for_label }}" class="block text-sm font-medium text-gray-700">Logo</label>
+                {{ form.logo }}
+                {% if form.logo.errors %}
+                    <p class="text-red-600 text-sm">{{ form.logo.errors }}</p>
+                {% endif %}
+                {% if form.instance.logo %}
+                    <img src="{{ form.instance.logo.url }}" alt="Organization Logo" class="mt-2 h-24">
+                {% endif %}
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    {{ form.enable_invoices }} <label for="{{ form.enable_invoices.id_for_label }}">Enable Invoices</label>
+                </div>
+                <div>
+                    {{ form.enable_customers }} <label for="{{ form.enable_customers.id_for_label }}">Enable Customers</label>
+                </div>
+                <div>
+                    {{ form.enable_reports }} <label for="{{ form.enable_reports.id_for_label }}">Enable Reports</label>
+                </div>
+                <div>
+                    {{ form.enable_leave }} <label for="{{ form.enable_leave.id_for_label }}">Enable Leave</label>
+                </div>
+                <div>
+                    {{ form.enable_timeoff }} <label for="{{ form.enable_timeoff.id_for_label }}">Enable Time Off</label>
+                </div>
+                <div>
+                    {{ form.enable_salaryadvance }} <label for="{{ form.enable_salaryadvance.id_for_label }}">Enable Salary Advance</label>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700">Save Profile</button>
+    </form>
+</div>
+{% endblock %}

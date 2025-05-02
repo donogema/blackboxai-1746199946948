@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Apply for Leave{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Apply for Leave</h1>
+    <form method="POST" novalidate>
+        {% csrf_token %}
+        <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.start_date.id_for_label }}" class="block text-sm font-medium text-gray-700">Start Date</label>
+                    {{ form.start_date }}
+                    {% if form.start_date.errors %}
+                        <p class="text-red-600 text-sm">{{ form.start_date.errors }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label for="{{ form.end_date.id_for_label }}" class="block text-sm font-medium text-gray-700">End Date</label>
+                    {{ form.end_date }}
+                    {% if form.end_date.errors %}
+                        <p class="text-red-600 text-sm">{{ form.end_date.errors }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="mt-4">
+                <label for="{{ form.reason.id_for_label }}" class="block text-sm font-medium text-gray-700">Reason</label>
+                {{ form.reason }}
+                {% if form.reason.errors %}
+                    <p class="text-red-600 text-sm">{{ form.reason.errors }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700">Submit Application</button>
+        <a href="{% url 'leave:leave_list' %}" class="ml-4 text-gray-600 hover:text-gray-900">Cancel</a>
+    </form>
+</div>
+{% endblock %}

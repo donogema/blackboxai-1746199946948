@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+                <h3 class="text-2xl leading-6 font-bold text-gray-900">Profile Information</h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">Personal details and account settings.</p>
+            </div>
+
+            <div class="px-4 py-5 sm:p-6">
+                <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="rounded-md bg-red-50 p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-circle text-red-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">
+                                    There were errors with your submission
+                                </h3>
+                                <div class="mt-2 text-sm text-red-700">
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        {% for field in form %}
+                                            {% for error in field.errors %}
+                                                <li>{{ field.label }}: {{ error }}</li>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Profile Picture -->
+                    <div class="flex items-center space-x-6">
+                        <div class="flex-shrink-0 h-24 w-24">
+                            {% if user.profile_picture %}
+                            <img class="h-24 w-24 rounded-full object-cover" src="{{ user.profile_picture.url }}"
+                                alt="{{ user.get_full_name }}">
+                            {% else %}
+                            <div
+                                class="h-24 w-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500">
+                                <i class="fas fa-user text-3xl"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">
+                                Profile Picture
+                            </label>
+                            <div class="mt-1 flex items-center">
+                                <input type="file" name="profile_picture" accept="image/*"
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                        <!-- First Name -->
+                        <div>
+                            <label for="id_first_name" class="block text-sm font-medium text-gray-700">First Name</label>
+                            <div class="mt-1">
+                                <input type="text" name="first_name" id="id_first_name"
+                                    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                    value="{{ user.first_name }}">
+                            </div>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div>
+                            <label for="id_last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+                            <div class="mt-1">
+                                <input type="text" name="last_name" id="id_last_name"
+                                    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                    value="{{ user.last_name }}">
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label for="id_email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <div class="mt-1">
+                                <input type="email" name="email" id="id_email"
+                                    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                    value="{{ user.email }}">
+                            </div>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div>
+                            <label for="id_phone_number" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                            <div class="mt-1">
+                                <input type="text" name="phone_number" id="id_phone_number"
+                                    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                    value="{{ user.phone_number }}">
+                            </div>
+                        </div>
+
+                        <!-- Department -->
+                        <div>
+                            <label for="id_department" class="block text-sm font-medium text-gray-700">Department</label>
+                            <div class="mt-1">
+                                <input type="text" name="department" id="id_department"
+                                    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                    value="{{ user.department }}">
+                            </div>
+                        </div>
+
+                        <!-- Role (Read-only) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Role</label>
+                            <div class="mt-1">
+                                <input type="text" readonly
+                                    class="shadow-sm block w-full sm:text-sm border-gray-300 rounded-md bg-gray-50"
+                                    value="{{ user.get_role_display }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-5">
+                        <div class="flex justify-end">
+                            <button type="button"
+                                class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                onclick="location.href='{% url 'users:dashboard' %}'">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Change Password Section -->
+        <div class="mt-8 bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Change Password</h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">Update your password to keep your account secure.</p>
+            </div>
+            <div class="px-4 py-5 sm:p-6">
+                <form method="POST" action="{% url 'password_change' %}" class="space-y-6">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                        <!-- Current Password -->
+                        <div>
+                            <label for="id_old_password" class="block text-sm font-medium text-gray-700">
+                                Current Password
+                            </label>
+                            <div class="mt-1">
+                                <input type="password" name="old_password" id="id_old_password"
+                                    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <!-- New Password -->
+                        <div>
+                            <label for="id_new_password1" class="block text-sm font-medium text-gray-700">
+                                New Password
+                            </label>
+                            <div class="mt-1">
+                                <input type="password" name="new_password1" id="id_new_password1"
+                                    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+
+                        <!-- Confirm New Password -->
+                        <div>
+                            <label for="id_new_password2" class="block text-sm font-medium text-gray-700">
+                                Confirm New Password
+                            </label>
+                            <div class="mt-1">
+                                <input type="password" name="new_password2" id="id_new_password2"
+                                    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit"
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Change Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

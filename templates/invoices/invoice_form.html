@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Create Invoice{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Create Invoice</h1>
+    <form method="POST" novalidate>
+        {% csrf_token %}
+        <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.invoice_number.id_for_label }}" class="block text-sm font-medium text-gray-700">Invoice Number</label>
+                    {{ form.invoice_number }}
+                    {% if form.invoice_number.errors %}
+                        <p class="text-red-600 text-sm">{{ form.invoice_number.errors }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label for="{{ form.customer.id_for_label }}" class="block text-sm font-medium text-gray-700">Customer</label>
+                    {{ form.customer }}
+                    {% if form.customer.errors %}
+                        <p class="text-red-600 text-sm">{{ form.customer.errors }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label for="{{ form.due_date.id_for_label }}" class="block text-sm font-medium text-gray-700">Due Date</label>
+                    {{ form.due_date }}
+                    {% if form.due_date.errors %}
+                        <p class="text-red-600 text-sm">{{ form.due_date.errors }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700">Status</label>
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                        <p class="text-red-600 text-sm">{{ form.status.errors }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="mt-4">
+                <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium text-gray-700">Notes</label>
+                {{ form.notes }}
+                {% if form.notes.errors %}
+                    <p class="text-red-600 text-sm">{{ form.notes.errors }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Invoice Items</h2>
+            {{ formset.management_form }}
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in formset.forms %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ form.description }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ form.quantity }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ form.unit_price }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ form.DELETE }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="button" id="add-item" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Add Item</button>
+        </div>
+
+        <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700">Save Invoice</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('add-item').addEventListener('click', function() {
+        var formsetPrefix = '{{ formset.prefix }}';
+        var totalForms = document.getElementById('id_' + formsetPrefix + '-TOTAL_FORMS');
+        var currentFormCount = parseInt(totalForms.value);
+        var newForm = document.querySelector('tbody tr').cloneNode(true);
+        var regex = new RegExp(formsetPrefix + '-(\\d+)-', 'g');
+        newForm.innerHTML = newForm.innerHTML.replace(regex, formsetPrefix + '-' + currentFormCount + '-');
+        var inputs = newForm.querySelectorAll('input');
+        inputs.forEach(function(input) {
+            if (input.type !== 'hidden') {
+                input.value = '';
+            }
+        });
+        document.querySelector('tbody').appendChild(newForm);
+        totalForms.value = currentFormCount + 1;
+    });
+</script>
+{% endblock %}
